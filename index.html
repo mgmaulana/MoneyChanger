@@ -141,6 +141,13 @@
       font-weight: 600;
     }
 
+    .currency-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .amount-group { min-width: 0; }
+
     .amount-box {
       min-height: 56px;
       display: flex;
@@ -842,32 +849,38 @@
       </div>
       <p class="rate-value" id="displayRate">1 PHP = Rp 0</p>
 
-      <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Rupiah (IDR)</label>
-      <div class="amount-box source">
-        <input type="text" id="inputNominal" inputmode="numeric" placeholder="0" aria-label="Jumlah yang dikonversi" oninput="formatDanHitung(this)" />
-        <div class="currency">
-          <span class="currency-flag flag-id" id="flagSource" aria-label="Bendera Indonesia"></span>
-          <span id="prefixNominal">Rp</span>
+      <div class="currency-row" id="phpRow">
+        <div class="amount-group" id="resultGroup">
+          <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
+          <div class="result-amount" aria-live="polite">
+            <span class="result-value" id="hasilUtama">₱ 0.00</span>
+            <span class="currency">
+              <span class="currency-flag flag-ph" id="flagTarget" aria-label="Bendera Filipina"></span>
+              <span id="currencyTarget">PHP</span>
+            </span>
+          </div>
+          <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
+            <div><span>Nominal hasil konversi</span><strong id="idrBase">Rp 0</strong></div>
+            <div><span>Biaya pembayaran (7,5%)</span><strong id="idrFee">Rp 0</strong></div>
+            <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
+          </div>
         </div>
       </div>
-      <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
       <div class="swap-wrap">
         <button type="button" class="swap-button" onclick="tukarArah()" aria-label="Tukar arah konversi">↕</button>
       </div>
-
-      <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
-      <div class="result-amount" aria-live="polite">
-        <span class="result-value" id="hasilUtama">₱ 0.00</span>
-        <span class="currency">
-          <span class="currency-flag flag-ph" id="flagTarget" aria-label="Bendera Filipina"></span>
-          <span id="currencyTarget">PHP</span>
-        </span>
-      </div>
-
-      <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
-        <div><span>Nominal hasil konversi</span><strong id="idrBase">Rp 0</strong></div>
-        <div><span>Biaya pembayaran (7,5%)</span><strong id="idrFee">Rp 0</strong></div>
-        <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
+      <div class="currency-row" id="idrRow">
+        <div class="amount-group" id="sourceGroup">
+          <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Rupiah (IDR)</label>
+          <div class="amount-box source">
+            <input type="text" id="inputNominal" inputmode="numeric" placeholder="0" aria-label="Jumlah yang dikonversi" oninput="formatDanHitung(this)" />
+            <div class="currency">
+              <span class="currency-flag flag-id" id="flagSource" aria-label="Bendera Indonesia"></span>
+              <span id="prefixNominal">Rp</span>
+            </div>
+          </div>
+          <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
+        </div>
       </div>
 
       <div class="direction-options" aria-label="Arah konversi">
@@ -928,8 +941,7 @@
           ? `Kurs referensi Frankfurter API • tanggal data: ${savedDate}. Sedang memeriksa pembaruan.`
           : 'Menggunakan kurs tersimpan sementara, sedang memeriksa pembaruan.';
       }
-      renderQuickButtons();
-      hitung();
+      setArah(arahKonversi);
       await perbaruiKurs();
       refreshKursTimer = window.setInterval(perbaruiKurs, INTERVAL_KURS);
     });
@@ -993,6 +1005,12 @@
       arahKonversi = arah;
       const idrToPhp = arah === 'IDR_TO_PHP';
       jenisRate = idrToPhp ? 'jual' : 'beli';
+      const phpRow = document.getElementById('phpRow');
+      const idrRow = document.getElementById('idrRow');
+      const sourceGroup = document.getElementById('sourceGroup');
+      const resultGroup = document.getElementById('resultGroup');
+      phpRow.appendChild(idrToPhp ? resultGroup : sourceGroup);
+      idrRow.appendChild(idrToPhp ? sourceGroup : resultGroup);
       document.getElementById('btnArahIDRtoPHP').classList.toggle('active', idrToPhp);
       document.getElementById('btnArahPHPtoIDR').classList.toggle('active', !idrToPhp);
       document.getElementById('labelNominal').textContent = idrToPhp
