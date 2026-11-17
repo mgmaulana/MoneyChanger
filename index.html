@@ -749,7 +749,7 @@
       document.getElementById('displayRate').textContent =
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
       document.getElementById('labelHasilUtama').textContent =
-        `Total yang harus dibayar (${arahKonversi === 'IDR_TO_PHP' ? 'PHP' : 'IDR'})`;
+        `Dikonversi menjadi (${arahKonversi === 'IDR_TO_PHP' ? 'PHP' : 'IDR'})`;
       document.getElementById('statusBadge').textContent = rateAktif > 0
         ? (nominalRaw > 0 ? 'Kurs otomatis aktif' : 'Masukkan nominal untuk menghitung total')
         : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
@@ -774,7 +774,7 @@
       const nominalText = arahKonversi === 'IDR_TO_PHP'
         ? `₱ ${nominalKonversi.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         : `Rp ${Math.round(nominalKonversi).toLocaleString('id-ID')}`;
-      document.getElementById('hasilUtama').textContent = totalText;
+      document.getElementById('hasilUtama').textContent = nominalText;
       document.getElementById('detailAwal').textContent = nominalText;
       document.getElementById('detailBiaya').textContent = biayaText;
       document.getElementById('detailAkhir').textContent = totalText;
