@@ -9,14 +9,14 @@
   <style>
     :root {
       color-scheme: light;
-      --green-950: #173700;
-      --green-900: #214900;
-      --green-800: #315d12;
-      --green-500: #8cda62;
-      --green-100: #eaf8df;
-      --ink: #17230f;
-      --muted: #64715e;
-      --line: #d7ddcf;
+      --blue-950: #102a56;
+      --blue-900: #1746a2;
+      --blue-800: #1d5bc7;
+      --blue-500: #4f8df7;
+      --blue-100: #eaf2ff;
+      --ink: #172554;
+      --muted: #64748b;
+      --line: #dbe4f2;
     }
 
     * { box-sizing: border-box; }
@@ -25,7 +25,7 @@
       min-height: 100vh;
       margin: 0;
       padding-bottom: 48px;
-      background: #f7f8f5;
+      background: #f5f8ff;
       color: var(--ink);
       font-family: 'Inter', sans-serif;
     }
@@ -36,7 +36,7 @@
     .topbar {
       position: relative;
       z-index: 1;
-      background: var(--green-950);
+      background: var(--blue-950);
       color: #fff;
     }
 
@@ -68,8 +68,8 @@
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background: var(--green-500);
-      color: var(--green-950);
+      background: var(--blue-500);
+      color: var(--blue-950);
       font-size: 17px;
       font-weight: 700;
     }
@@ -105,7 +105,7 @@
     .hero {
       min-height: 368px;
       padding: 34px 16px 70px;
-      background: var(--green-950);
+      background: var(--blue-950);
     }
 
     .converter {
@@ -128,7 +128,7 @@
     .rate-value {
       margin: 7px 0 22px;
       text-align: center;
-      color: var(--green-950);
+      color: var(--blue-950);
       font-size: 14px;
       font-weight: 700;
     }
@@ -153,11 +153,11 @@
     }
 
     .amount-box:focus-within {
-      border: 2px solid var(--green-900);
+      border: 2px solid var(--blue-900);
       padding: 0 9px;
     }
 
-    .amount-box.source { border: 2px solid var(--green-900); }
+    .amount-box.source { border: 2px solid var(--blue-900); }
 
     .amount-box input {
       width: 100%;
@@ -221,14 +221,14 @@
       place-items: center;
       border: 0;
       border-radius: 50%;
-      background: var(--green-500);
-      color: var(--green-950);
+      background: var(--blue-500);
+      color: var(--blue-950);
       font-size: 19px;
       font-weight: 700;
       transition: transform .18s ease, background .18s ease;
     }
 
-    .swap-button:hover { transform: rotate(180deg); background: #79ce4c; }
+    .swap-button:hover { transform: rotate(180deg); background: #3b82f6; }
 
     .result-amount {
       width: 100%;
@@ -267,7 +267,7 @@
       font-weight: 600;
     }
 
-    .quick-button:hover { border-color: #9ed580; background: var(--green-100); }
+    .quick-button:hover { border-color: #93b4f3; background: var(--blue-100); }
 
     .direction-options {
       display: grid;
@@ -287,9 +287,9 @@
     }
 
     .direction-button.active, .mode-button.active {
-      border-color: var(--green-800);
-      background: var(--green-100);
-      color: var(--green-900);
+      border-color: var(--blue-800);
+      background: var(--blue-100);
+      color: var(--blue-900);
     }
 
     .converter-actions {
@@ -306,20 +306,20 @@
     }
 
     .primary-action {
-      border: 1px solid var(--green-500);
-      background: var(--green-500);
-      color: var(--green-950);
+      border: 1px solid var(--blue-500);
+      background: var(--blue-500);
+      color: var(--blue-950);
     }
 
-    .primary-action:hover { background: #79ce4c; }
+    .primary-action:hover { background: #3b82f6; }
 
     .secondary-action {
-      border: 1px solid var(--green-900);
+      border: 1px solid var(--blue-900);
       background: #fff;
-      color: var(--green-900);
+      color: var(--blue-900);
     }
 
-    .secondary-action:hover { background: #f2f8ed; }
+    .secondary-action:hover { background: #f1f6ff; }
 
     .status-line {
       margin: 10px 0 0;
@@ -353,8 +353,8 @@
     .section-heading span {
       border-radius: 999px;
       padding: 5px 10px;
-      background: var(--green-100);
-      color: var(--green-900);
+      background: var(--blue-100);
+      color: var(--blue-900);
       font-size: 10px;
       font-weight: 700;
     }
@@ -402,25 +402,25 @@
       margin: 14px 0;
       border-radius: 10px;
       padding: 11px 12px;
-      background: #f5f8f1;
+      background: #f1f6ff;
     }
 
     .live-rate-info { min-width: 0; }
-    .live-rate-info strong { display: block; color: var(--green-900); font-size: 12px; }
+    .live-rate-info strong { display: block; color: var(--blue-900); font-size: 12px; }
     .live-rate-info span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
 
     .refresh-button {
       flex: none;
-      border: 1px solid var(--green-800);
+      border: 1px solid var(--blue-800);
       border-radius: 999px;
       padding: 7px 10px;
       background: #fff;
-      color: var(--green-900);
+      color: var(--blue-900);
       font-size: 11px;
       font-weight: 600;
     }
 
-    .refresh-button:hover { background: var(--green-100); }
+    .refresh-button:hover { background: var(--blue-100); }
     .refresh-button:disabled { cursor: wait; opacity: .6; }
 
     .mode-button:disabled {
@@ -435,7 +435,7 @@
       top: 50%;
       left: 12px;
       transform: translateY(-50%);
-      color: #687363;
+      color: #64748b;
       font-size: 12px;
       font-weight: 600;
     }
@@ -443,22 +443,22 @@
     .rate-input-wrap input {
       width: 100%;
       min-height: 42px;
-      border: 1px solid #cbd2c5;
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
       padding: 0 10px 0 34px;
       outline: 0;
-      color: #26331f;
+      color: #172554;
       font-size: 14px;
       font-weight: 600;
     }
 
     .rate-input-wrap input:focus {
-      border-color: var(--green-800);
-      box-shadow: 0 0 0 3px rgb(140 218 98 / 20%);
+      border-color: var(--blue-800);
+      box-shadow: 0 0 0 3px rgb(79 141 247 / 20%);
     }
 
     .rate-field label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 600; }
-    .rate-field p { margin: 5px 0 0; color: #788273; font-size: 10px; }
+    .rate-field p { margin: 5px 0 0; color: #78869c; font-size: 10px; }
 
     .spread-row {
       display: flex;
@@ -466,7 +466,7 @@
       justify-content: space-between;
       gap: 8px;
       margin-top: 14px;
-      border-top: 1px solid #edf0ea;
+      border-top: 1px solid #e8edf5;
       padding-top: 12px;
       color: var(--muted);
       font-size: 11px;
@@ -488,16 +488,61 @@
     #btnCopy {
       width: 100%;
       margin-top: 14px;
-      border: 1px solid var(--green-900);
+      border: 1px solid var(--blue-900);
       border-radius: 999px;
       padding: 10px 14px;
-      background: var(--green-900);
+      background: var(--blue-900);
       color: #fff;
       font-size: 12px;
       font-weight: 600;
     }
 
-    #btnCopy:hover { background: var(--green-950); }
+    #btnCopy:hover { background: var(--blue-950); }
+
+    .contact-card {
+      width: min(100% - 32px, 430px);
+      margin: 18px auto 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgb(16 42 86 / 6%);
+    }
+
+    .contact-card h2 {
+      margin: 0 0 4px;
+      color: var(--blue-950);
+      font-size: 14px;
+    }
+
+    .contact-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .contact-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      border: 1px solid #c8d8f5;
+      border-radius: 9px;
+      background: var(--blue-100);
+      color: var(--blue-900);
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .contact-link:hover { border-color: var(--blue-500); background: #dce9ff; }
 
     @media (max-width: 640px) {
       .nav-inner { min-height: 54px; padding: 9px 14px; }
@@ -576,6 +621,19 @@
       <p class="status-line" id="statusBadge">Menunggu kurs dan nominal</p>
     </div>
   </section>
+
+  <footer class="contact-card">
+    <h2>Hubungi kami</h2>
+    <p>Silakan hubungi kami melalui WhatsApp atau Telegram.</p>
+    <div class="contact-links">
+      <a class="contact-link" href="https://wa.me/6283143288500" target="_blank" rel="noopener noreferrer">
+        WhatsApp: +62 831-4328-8500
+      </a>
+      <a class="contact-link" href="https://t.me/mgm_1227" target="_blank" rel="noopener noreferrer">
+        Telegram: @mgm_1227
+      </a>
+    </div>
+  </footer>
 
   <script>
     let jenisRate = 'jual';
