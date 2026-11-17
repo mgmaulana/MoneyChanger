@@ -850,34 +850,34 @@
       <p class="rate-value" id="displayRate">1 PHP = Rp 0</p>
 
       <div class="currency-row" id="phpRow">
-        <div class="amount-group" id="resultGroup">
-          <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
-          <div class="result-amount" aria-live="polite">
-            <span class="result-value" id="hasilUtama">₱ 0.00</span>
-            <span class="currency">
-              <span class="currency-flag flag-ph" id="flagTarget" aria-label="Bendera Filipina"></span>
-              <span id="currencyTarget">PHP</span>
-            </span>
+        <div class="amount-group" id="sourceGroup">
+          <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Peso Filipina (PHP)</label>
+          <div class="amount-box source">
+            <input type="text" id="inputNominal" inputmode="numeric" placeholder="0" aria-label="Jumlah yang dikonversi" oninput="formatDanHitung(this)" />
+            <div class="currency">
+              <span class="currency-flag flag-ph" id="flagSource" aria-label="Bendera Filipina"></span>
+              <span id="prefixNominal">PHP</span>
+            </div>
           </div>
-          <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
-            <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
-          </div>
+          <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
         </div>
       </div>
       <div class="swap-wrap">
         <button type="button" class="swap-button" onclick="tukarArah()" aria-label="Tukar arah konversi">↕</button>
       </div>
       <div class="currency-row" id="idrRow">
-        <div class="amount-group" id="sourceGroup">
-          <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Rupiah (IDR)</label>
-          <div class="amount-box source">
-            <input type="text" id="inputNominal" inputmode="numeric" placeholder="0" aria-label="Jumlah yang dikonversi" oninput="formatDanHitung(this)" />
-            <div class="currency">
-              <span class="currency-flag flag-id" id="flagSource" aria-label="Bendera Indonesia"></span>
-              <span id="prefixNominal">Rp</span>
-            </div>
+        <div class="amount-group" id="resultGroup">
+          <label class="amount-label" id="labelHasilUtama">Nominal dalam Rupiah (IDR)</label>
+          <div class="result-amount" aria-live="polite">
+            <span class="result-value" id="hasilUtama">Rp 0</span>
+            <span class="currency">
+              <span class="currency-flag flag-id" id="flagTarget" aria-label="Bendera Indonesia"></span>
+              <span id="currencyTarget">IDR</span>
+            </span>
           </div>
-          <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
+          <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
+            <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
+          </div>
         </div>
       </div>
 
@@ -1007,19 +1007,17 @@
       const idrRow = document.getElementById('idrRow');
       const sourceGroup = document.getElementById('sourceGroup');
       const resultGroup = document.getElementById('resultGroup');
-      phpRow.appendChild(idrToPhp ? resultGroup : sourceGroup);
-      idrRow.appendChild(idrToPhp ? sourceGroup : resultGroup);
+      phpRow.appendChild(sourceGroup);
+      idrRow.appendChild(resultGroup);
       document.getElementById('btnArahIDRtoPHP').classList.toggle('active', idrToPhp);
       document.getElementById('btnArahPHPtoIDR').classList.toggle('active', !idrToPhp);
-      document.getElementById('labelNominal').textContent = idrToPhp
-        ? 'Jumlah dalam Rupiah (IDR)'
-        : 'Jumlah dalam Peso Filipina (PHP)';
-      document.getElementById('prefixNominal').textContent = idrToPhp ? 'IDR' : 'PHP';
-      document.getElementById('flagSource').className = `currency-flag ${idrToPhp ? 'flag-id' : 'flag-ph'}`;
-      document.getElementById('flagSource').setAttribute('aria-label', idrToPhp ? 'Bendera Indonesia' : 'Bendera Filipina');
-      document.getElementById('currencyTarget').textContent = idrToPhp ? 'PHP' : 'IDR';
-      document.getElementById('flagTarget').className = `currency-flag ${idrToPhp ? 'flag-ph' : 'flag-id'}`;
-      document.getElementById('flagTarget').setAttribute('aria-label', idrToPhp ? 'Bendera Filipina' : 'Bendera Indonesia');
+      document.getElementById('labelNominal').textContent = 'Jumlah dalam Peso Filipina (PHP)';
+      document.getElementById('prefixNominal').textContent = 'PHP';
+      document.getElementById('flagSource').className = 'currency-flag flag-ph';
+      document.getElementById('flagSource').setAttribute('aria-label', 'Bendera Filipina');
+      document.getElementById('currencyTarget').textContent = 'IDR';
+      document.getElementById('flagTarget').className = 'currency-flag flag-id';
+      document.getElementById('flagTarget').setAttribute('aria-label', 'Bendera Indonesia');
       renderQuickButtons();
       hitung();
     }
@@ -1030,10 +1028,8 @@
 
     function renderQuickButtons() {
       const container = document.getElementById('quickButtons');
-      const presets = arahKonversi === 'IDR_TO_PHP'
-        ? [100000, 500000, 1000000, 5000000]
-        : [500, 1000, 5000, 10000];
-      const prefix = arahKonversi === 'IDR_TO_PHP' ? 'Rp ' : '₱ ';
+      const presets = [500, 1000, 5000, 10000];
+      const prefix = '₱ ';
 
       container.innerHTML = presets.map(value => `
         <button type="button" class="quick-button" onclick="setNominalCepat(${value})">
@@ -1062,7 +1058,7 @@
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
       document.getElementById('labelHasilUtama').textContent = pembayaranIdr
         ? 'Total pembayaran (termasuk biaya 7,5%)'
-        : 'Dikonversi menjadi';
+        : 'Nominal dalam Rupiah (IDR)';
       document.getElementById('paymentBreakdown').hidden = !pembayaranIdr;
       document.getElementById('statusBadge').textContent = rateAktif > 0
         ? (nominalRaw > 0
@@ -1070,19 +1066,11 @@
           : 'Masukkan nominal untuk menghitung total')
         : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
 
-      let hasilText;
-      if (arahKonversi === 'IDR_TO_PHP') {
-        const hasilPHP = rateAktif > 0 ? nominalRaw / rateAktif : 0;
-        hasilText = `₱ ${hasilPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      } else {
-        const nominalIdr = Math.round(nominalRaw * rateAktif);
-        const biayaIdr = Math.round(nominalIdr * 0.075);
-        const totalBayarIdr = nominalIdr + biayaIdr;
-        const formatRupiah = value => `Rp ${value.toLocaleString('id-ID')}`;
-
-        document.getElementById('idrTotal').textContent = formatRupiah(totalBayarIdr);
-        hasilText = formatRupiah(totalBayarIdr);
-      }
+      const nominalIdr = Math.round(nominalRaw * rateAktif);
+      const biayaIdr = pembayaranIdr ? Math.round(nominalIdr * 0.075) : 0;
+      const totalBayarIdr = nominalIdr + biayaIdr;
+      const hasilText = `Rp ${totalBayarIdr.toLocaleString('id-ID')}`;
+      if (pembayaranIdr) document.getElementById('idrTotal').textContent = hasilText;
 
       document.getElementById('hasilUtama').textContent = hasilText;
     }
@@ -1097,10 +1085,11 @@
       const kurs = document.getElementById('displayRate').textContent;
       const hasil = document.getElementById('hasilUtama').textContent;
       const nominal = document.getElementById('inputNominal').value || '0';
+      const detailNominal = `\nJumlah PHP: ₱ ${nominal}`;
       const detailPembayaran = arahKonversi === 'PHP_TO_IDR'
         ? `\nTotal yang dibayarkan: ${document.getElementById('idrTotal').textContent}`
-        : `\nHasil konversi: ${hasil}`;
-      const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}\nNominal: ${nominal}${detailPembayaran}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
+        : `\nNominal IDR: ${hasil}`;
+      const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}${detailNominal}${detailPembayaran}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
 
       navigator.clipboard.writeText(teks).then(() => {
         const primaryButton = document.getElementById('btnPrimaryText');
