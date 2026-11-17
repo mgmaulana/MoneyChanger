@@ -1050,22 +1050,18 @@
       || 0;
     let rateBeli = savedRate;
     let rateJual = savedRate;
-    let refreshKursTimer = null;
     let sedangMemperbaruiKurs = false;
-    const INTERVAL_KURS = 30 * 60 * 1000;
 
-    window.addEventListener('DOMContentLoaded', async () => {
+    window.addEventListener('DOMContentLoaded', () => {
       if (savedRate > 0) {
         document.getElementById('liveRateValue').textContent =
           `Kurs tersimpan: 1 PHP = Rp ${savedRate.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
         const savedDate = localStorage.getItem('kurs_php_date');
         document.getElementById('liveRateStatus').textContent = savedDate
-          ? `Kurs referensi Frankfurter API • tanggal data: ${savedDate}. Sedang memeriksa pembaruan.`
-          : 'Menggunakan kurs tersimpan sementara, sedang memeriksa pembaruan.';
+          ? `Kurs referensi Frankfurter API • tanggal data: ${savedDate}. Tekan Perbarui untuk mengambil kurs terbaru.`
+          : 'Menggunakan kurs tersimpan. Tekan Perbarui untuk mengambil kurs terbaru.';
       }
       setArah(arahKonversi);
-      await perbaruiKurs();
-      refreshKursTimer = window.setInterval(perbaruiKurs, INTERVAL_KURS);
     });
 
     async function perbaruiKurs() {
@@ -1107,7 +1103,7 @@
         document.getElementById('liveRateValue').textContent =
           `Referensi pasar: 1 PHP = Rp ${kursPasar.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
         document.getElementById('liveRateStatus').textContent =
-          `Frankfurter API (referensi ECB) • tanggal data: ${tanggalKurs}. Cek otomatis setiap 30 menit.`;
+          `Frankfurter API (referensi ECB) • tanggal data: ${tanggalKurs}. Tekan Perbarui untuk menyegarkan kurs.`;
         hitung();
       } catch (error) {
         const message = error.name === 'AbortError'
