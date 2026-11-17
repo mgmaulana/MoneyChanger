@@ -292,32 +292,6 @@
       color: var(--green-900);
     }
 
-    .fee-breakdown {
-      display: grid;
-      gap: 9px;
-      margin-top: 15px;
-      border-top: 1px solid #edf0ea;
-      padding-top: 12px;
-      font-size: 11px;
-    }
-
-    .fee-breakdown > div {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .fee-breakdown span { color: var(--muted); }
-    .fee-breakdown strong { text-align: right; }
-    .fee-breakdown .fee-total {
-      margin-top: 2px;
-      border-top: 1px solid #edf0ea;
-      padding-top: 10px;
-      color: var(--green-900);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
     .converter-actions {
       display: grid;
       gap: 7px;
@@ -582,7 +556,7 @@
         <button type="button" class="swap-button" onclick="tukarArah()" aria-label="Tukar arah konversi">↕</button>
       </div>
 
-      <label class="amount-label" id="labelHasilUtama">Total yang harus dibayar</label>
+      <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
       <div class="result-amount" aria-live="polite">
         <span class="result-value" id="hasilUtama">₱ 0.00</span>
         <span class="currency">
@@ -596,14 +570,8 @@
         <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')">PHP → IDR</button>
       </div>
 
-      <div class="fee-breakdown" aria-live="polite">
-        <div><span>Nominal sesuai kurs</span><strong id="detailAwal">Rp 0</strong></div>
-        <div><span>Biaya tambahan (Rp 50.000)</span><strong id="detailBiaya">Rp 50.000</strong></div>
-        <div class="fee-total"><span>Total yang harus dibayar</span><strong id="detailAkhir">₱ 0.00</strong></div>
-      </div>
-
       <div class="converter-actions">
-        <button type="button" class="primary-action" onclick="salinHasil()"><span id="btnPrimaryText">Salin rincian pembayaran</span></button>
+        <button type="button" class="primary-action" onclick="salinHasil()"><span id="btnPrimaryText">Salin hasil konversi</span></button>
       </div>
       <p class="status-line" id="statusBadge">Menunggu kurs dan nominal</p>
     </div>
@@ -622,7 +590,6 @@
     let refreshKursTimer = null;
     let sedangMemperbaruiKurs = false;
     const INTERVAL_KURS = 30 * 60 * 1000;
-    const BIAYA_TAMBAHAN_IDR = 50000;
 
     window.addEventListener('DOMContentLoaded', async () => {
       if (savedRate > 0) {
@@ -748,36 +715,21 @@
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
       document.getElementById('displayRate').textContent =
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-      document.getElementById('labelHasilUtama').textContent =
-        `Dikonversi menjadi (${arahKonversi === 'IDR_TO_PHP' ? 'PHP' : 'IDR'})`;
+      document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
       document.getElementById('statusBadge').textContent = rateAktif > 0
         ? (nominalRaw > 0 ? 'Kurs otomatis aktif' : 'Masukkan nominal untuk menghitung total')
         : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
 
-      let nominalKonversi;
-      let biayaText;
-      let totalText;
+      let hasilText;
       if (arahKonversi === 'IDR_TO_PHP') {
-        nominalKonversi = rateAktif > 0 ? nominalRaw / rateAktif : 0;
-        const biayaPHP = nominalRaw > 0 && rateAktif > 0 ? BIAYA_TAMBAHAN_IDR / rateAktif : 0;
-        const totalPHP = nominalKonversi + biayaPHP;
-        biayaText = `₱ ${biayaPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        totalText = `₱ ${totalPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const hasilPHP = rateAktif > 0 ? nominalRaw / rateAktif : 0;
+        hasilText = `₱ ${hasilPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       } else {
-        nominalKonversi = nominalRaw * rateAktif;
-        const biayaIDR = nominalRaw > 0 && rateAktif > 0 ? BIAYA_TAMBAHAN_IDR : 0;
-        const totalIDR = nominalKonversi + biayaIDR;
-        biayaText = `Rp ${biayaIDR.toLocaleString('id-ID')}`;
-        totalText = `Rp ${Math.round(totalIDR).toLocaleString('id-ID')}`;
+        const hasilIDR = nominalRaw * rateAktif;
+        hasilText = `Rp ${Math.round(hasilIDR).toLocaleString('id-ID')}`;
       }
 
-      const nominalText = arahKonversi === 'IDR_TO_PHP'
-        ? `₱ ${nominalKonversi.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-        : `Rp ${Math.round(nominalKonversi).toLocaleString('id-ID')}`;
-      document.getElementById('hasilUtama').textContent = nominalText;
-      document.getElementById('detailAwal').textContent = nominalText;
-      document.getElementById('detailBiaya').textContent = biayaText;
-      document.getElementById('detailAkhir').textContent = totalText;
+      document.getElementById('hasilUtama').textContent = hasilText;
     }
 
     function resetForm() {
@@ -788,16 +740,14 @@
 
     function salinHasil() {
       const kurs = document.getElementById('displayRate').textContent;
-      const nominal = document.getElementById('detailAwal').textContent;
-      const biaya = document.getElementById('detailBiaya').textContent;
-      const total = document.getElementById('detailAkhir').textContent;
-      const teks = `Total pembayaran IDR ↔ PHP\n${kurs}\nNominal sesuai kurs: ${nominal}\nBiaya tambahan: ${biaya}\nTotal harus dibayar: ${total}`;
+      const hasil = document.getElementById('hasilUtama').textContent;
+      const teks = `Kalkulasi Kurs IDR ↔ PHP\n${kurs}\nNominal: ${document.getElementById('inputNominal').value || '0'}\nHasil konversi: ${hasil}`;
 
       navigator.clipboard.writeText(teks).then(() => {
         const primaryButton = document.getElementById('btnPrimaryText');
         primaryButton.textContent = 'Tersalin ke clipboard!';
         window.setTimeout(() => {
-          primaryButton.textContent = 'Salin rincian pembayaran';
+          primaryButton.textContent = 'Salin hasil konversi';
         }, 2000);
       }).catch(() => {
         document.getElementById('statusBadge').textContent = 'Tidak dapat menyalin. Periksa izin clipboard browser.';
