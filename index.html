@@ -3,262 +3,612 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kalkulator Kurs Jual Beli IDR ↔ PHP</title>
+  <title>Kalkulator Kurs IDR ↔ PHP</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
+    :root {
+      color-scheme: light;
+      --green-950: #173700;
+      --green-900: #214900;
+      --green-800: #315d12;
+      --green-500: #8cda62;
+      --green-100: #eaf8df;
+      --ink: #17230f;
+      --muted: #64715e;
+      --line: #d7ddcf;
     }
-    /* Menghilangkan panah default pada input number */
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
       margin: 0;
+      padding-bottom: 48px;
+      background: #f7f8f5;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      background: var(--green-950);
+      color: #fff;
+    }
+
+    .nav-inner {
+      max-width: 1120px;
+      min-height: 58px;
+      margin: 0 auto;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green-500);
+      color: var(--green-950);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      margin-right: auto;
+      margin-left: 32px;
+      color: #d4e5c7;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .nav-links a { color: inherit; text-decoration: none; }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-actions { display: flex; gap: 8px; }
+
+    .nav-action {
+      border: 1px solid #58763e;
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .nav-action:hover { background: #2b5010; }
+
+    .hero {
+      min-height: 368px;
+      padding: 34px 16px 70px;
+      background: var(--green-950);
+    }
+
+    .converter {
+      width: min(100%, 430px);
+      margin: 0 auto;
+      padding: 24px 22px 20px;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 16px 42px rgb(15 32 4 / 20%);
+    }
+
+    .rate-heading {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .rate-value {
+      margin: 7px 0 22px;
+      text-align: center;
+      color: var(--green-950);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .amount-label {
+      display: block;
+      margin-bottom: 5px;
+      color: #3d4937;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .amount-box {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #b5bcb0;
+      border-radius: 9px;
+      padding: 0 10px;
+      background: #fff;
+    }
+
+    .amount-box:focus-within {
+      border: 2px solid var(--green-900);
+      padding: 0 9px;
+    }
+
+    .amount-box.source { border: 2px solid var(--green-900); }
+
+    .amount-box input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #182312;
+      font-size: 19px;
+      font-weight: 600;
+    }
+
+    .amount-box input::placeholder { color: #9aa294; }
+
+    .currency {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #26331f;
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .currency-flag {
+      position: relative;
+      width: 20px;
+      height: 15px;
+      display: inline-block;
+      flex: none;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    .flag-id { background: linear-gradient(to bottom, #e11d48 50%, #fff 50%); }
+
+    .flag-ph { background: linear-gradient(to bottom, #1765bd 50%, #dc2638 50%); }
+
+    .flag-ph::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-top: 7.5px solid transparent;
+      border-bottom: 7.5px solid transparent;
+      border-left: 9px solid #fff;
+      content: "";
+    }
+
+    .swap-wrap {
+      height: 56px;
+      display: grid;
+      place-items: center;
+    }
+
+    .swap-button {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: var(--green-500);
+      color: var(--green-950);
+      font-size: 19px;
+      font-weight: 700;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .swap-button:hover { transform: rotate(180deg); background: #79ce4c; }
+
+    .result-amount {
+      width: 100%;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid #b5bcb0;
+      border-radius: 9px;
+      padding: 0 10px;
+      background: #fff;
+    }
+
+    .result-value {
+      overflow-wrap: anywhere;
+      color: #26331f;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .quick-button {
+      border: 1px solid #dfe5da;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #f7f9f4;
+      color: #4a5743;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .quick-button:hover { border-color: #9ed580; background: var(--green-100); }
+
+    .direction-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .direction-button, .mode-button {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 8px;
+      background: #fff;
+      color: #56614f;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .direction-button.active, .mode-button.active {
+      border-color: var(--green-800);
+      background: var(--green-100);
+      color: var(--green-900);
+    }
+
+    .converter-actions {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .primary-action, .secondary-action {
+      min-height: 42px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .primary-action {
+      border: 1px solid var(--green-500);
+      background: var(--green-500);
+      color: var(--green-950);
+    }
+
+    .primary-action:hover { background: #79ce4c; }
+
+    .secondary-action {
+      border: 1px solid var(--green-900);
+      background: #fff;
+      color: var(--green-900);
+    }
+
+    .secondary-action:hover { background: #f2f8ed; }
+
+    .status-line {
+      margin: 10px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .below-content {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 32px, 760px);
+      margin: -38px auto 0;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 12px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: #26331f;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .section-heading span {
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: var(--green-100);
+      color: var(--green-900);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .support-card {
+      margin-bottom: 16px;
+      border: 1px solid #e0e5db;
+      border-radius: 16px;
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgb(20 35 10 / 4%);
+    }
+
+    .support-card h3 {
+      margin: 0 0 12px;
+      color: #26331f;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mode-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+    .mode-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 10px 12px;
+    }
+
+    .mode-button span:last-child {
+      border-radius: 6px;
+      padding: 3px 6px;
+      background: rgb(255 255 255 / 75%);
+      font-size: 10px;
+    }
+
+    .rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .rate-input-wrap { position: relative; }
+
+    .rate-input-wrap span {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #687363;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .rate-input-wrap input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #cbd2c5;
+      border-radius: 8px;
+      padding: 0 10px 0 34px;
+      outline: 0;
+      color: #26331f;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .rate-input-wrap input:focus {
+      border-color: var(--green-800);
+      box-shadow: 0 0 0 3px rgb(140 218 98 / 20%);
+    }
+
+    .rate-field label { display: block; margin-bottom: 5px; font-size: 11px; font-weight: 600; }
+    .rate-field p { margin: 5px 0 0; color: #788273; font-size: 10px; }
+
+    .spread-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 14px;
+      border-top: 1px solid #edf0ea;
+      padding-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .spread-row strong { color: var(--ink); }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .detail-grid dt { color: var(--muted); }
+    .detail-grid dd { margin: 0; text-align: right; font-weight: 600; }
+
+    #btnCopy {
+      width: 100%;
+      margin-top: 14px;
+      border: 1px solid var(--green-900);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--green-900);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    #btnCopy:hover { background: var(--green-950); }
+
+    @media (max-width: 640px) {
+      .nav-inner { min-height: 54px; padding: 9px 14px; }
+      .nav-links { display: none; }
+      .brand { font-size: 13px; }
+      .brand-mark { width: 29px; height: 29px; }
+      .nav-action { padding: 7px 8px; font-size: 11px; }
+      .hero { min-height: 350px; padding: 24px 12px 58px; }
+      .converter { padding: 21px 16px 17px; border-radius: 20px; }
+      .below-content { width: min(100% - 24px, 760px); margin-top: -32px; }
+      .support-card { padding: 15px; }
+    }
+
+    @media (max-width: 380px) {
+      .nav-action { font-size: 10px; }
+      .rates-grid { grid-template-columns: 1fr; }
+      .mode-button { padding: 9px 8px; font-size: 11px; }
     }
   </style>
 </head>
-<body class="min-h-screen pb-12">
-
-  <!-- Top Navbar (Meniru Header Kalkulator KPI Live Chat) -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-200">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">Kalkulator Kurs IDR ↔ PHP</h1>
-          <p class="text-xs sm:text-sm text-slate-500">Konversi Jual & Beli Rupiah ke Peso • Input Rate Manual</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2.5">
-        <button onclick="isiContoh()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 text-sm font-medium transition cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-          </svg>
-          Isi Contoh
-        </button>
-        <button onclick="resetForm()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-medium transition cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Reset
-        </button>
+<body>
+  <header class="topbar">
+    <div class="nav-inner">
+      <a class="brand" href="#" aria-label="Kalkulator Kurs IDR dan PHP">
+        <span class="brand-mark">↔</span>
+        <span>Kurs IDR ↔ PHP</span>
+      </a>
+      <nav class="nav-links" aria-label="Navigasi utama">
+        <a href="#kalkulator">Kirim mata uang</a>
+        <a href="#pengaturanKurs">Terima berita kurs</a>
+        <a href="#rincian">Bandingkan kurs bank</a>
+      </nav>
+      <div class="nav-actions">
+        <button type="button" class="nav-action" onclick="isiContoh()">Isi Contoh</button>
+        <button type="button" class="nav-action" onclick="resetForm()">Reset</button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Grid -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 mt-7 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    
-    <!-- KOLOM KIRI: Pengaturan Rate & Input Nominal (7 kolom) -->
-    <div class="lg:col-span-7 space-y-6">
-      
-      <!-- Card 1: Pengaturan Rate Manual -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <h2 class="text-base font-bold text-slate-800">Pengaturan Rate Manual (1 PHP ke IDR)</h2>
-          </div>
-          <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Auto-Save</span>
-        </div>
+  <section class="hero" id="kalkulator">
+    <div class="converter">
+      <p class="rate-heading">Nilai tukar berdasarkan rate aktif</p>
+      <p class="rate-value" id="displayRate">1 PHP = Rp 0</p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Input Rate Beli -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
-              Rate Beli (IDR per 1 PHP)
-            </label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">Rp</span>
-              <input type="number" step="any" id="rateBeli" placeholder="Contoh: 280" oninput="hitung()"
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition" />
-            </div>
-            <p class="text-[11px] text-slate-400 mt-1">Dipakai saat Anda membeli Peso dari user</p>
-          </div>
-
-          <!-- Input Rate Jual -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
-              Rate Jual (IDR per 1 PHP)
-            </label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">Rp</span>
-              <input type="number" step="any" id="rateJual" placeholder="Contoh: 292" oninput="hitung()"
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition" />
-            </div>
-            <p class="text-[11px] text-slate-400 mt-1">Dipakai saat Anda menjual Peso ke user</p>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-          <span>Selisih (Spread): <strong id="spreadText" class="text-slate-700">Rp 0</strong></span>
-          <span class="text-indigo-600 font-medium">Rate tersimpan otomatis di perangkat ini</span>
-        </div>
-      </section>
-
-      <!-- Section Title: Parameter Transaksi -->
-      <div>
-        <div class="flex items-center justify-between mb-1">
-          <h2 class="text-base font-bold text-slate-900">Parameter Transaksi</h2>
-          <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
-            Kalkulasi Real-Time
-          </span>
-        </div>
-        <p class="text-xs sm:text-sm text-slate-500 mb-4">Pilih jenis transaksi dan masukkan nominal uang yang ingin dikonversi.</p>
-
-        <!-- Card 2: Pilihan Jenis Rate & Nominal -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 space-y-5">
-          
-          <!-- Step 1: Pilih Mode Rate -->
-          <div>
-            <div class="flex items-center gap-2.5 mb-2.5">
-              <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-100">T1</span>
-              <div>
-                <h3 class="text-sm font-bold text-slate-800">Jenis Transaksi (Rate Aktif)</h3>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <button type="button" id="btnModeJual" onclick="setJenisRate('jual')"
-                class="py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer">
-                <span>Rate Jual</span>
-                <span id="badgeRateJual" class="text-xs bg-white px-2 py-0.5 rounded-md border border-indigo-200">Rp 0</span>
-              </button>
-              <button type="button" id="btnModeBeli" onclick="setJenisRate('beli')"
-                class="py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer">
-                <span>Rate Beli</span>
-                <span id="badgeRateBeli" class="text-xs bg-slate-100 px-2 py-0.5 rounded-md">Rp 0</span>
-              </button>
-            </div>
-          </div>
-
-          <hr class="border-slate-100" />
-
-          <!-- Step 2: Arah Konversi -->
-          <div>
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2.5">
-                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-100">T2</span>
-                <h3 class="text-sm font-bold text-slate-800">Arah Konversi</h3>
-              </div>
-              <button type="button" onclick="tukarArah()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                </svg>
-                Tukar Mata Uang
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <button type="button" id="btnArahIDRtoPHP" onclick="setArah('IDR_TO_PHP')"
-                class="py-2 px-3 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-xs sm:text-sm transition cursor-pointer">
-                IDR (Rp) → PHP (₱)
-              </button>
-              <button type="button" id="btnArahPHPtoIDR" onclick="setArah('PHP_TO_IDR')"
-                class="py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition cursor-pointer">
-                PHP (₱) → IDR (Rp)
-              </button>
-            </div>
-          </div>
-
-          <hr class="border-slate-100" />
-
-          <!-- Step 3: Input Nominal -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2.5">
-                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-100">T3</span>
-                <h3 class="text-sm font-bold text-slate-800" id="labelNominal">Nominal Rupiah (IDR)</h3>
-              </div>
-              <span class="text-xs text-slate-400" id="hintNominal">Masukkan jumlah Rp</span>
-            </div>
-
-            <div class="relative">
-              <span id="prefixNominal" class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500 font-bold text-base">Rp</span>
-              <input type="text" id="inputNominal" placeholder="0" oninput="formatDanHitung(this)"
-                class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-300 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition" />
-            </div>
-
-            <!-- Quick Nominal Buttons -->
-            <div class="flex flex-wrap gap-2 mt-2.5" id="quickButtons"></div>
-          </div>
-
+      <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Rupiah (IDR)</label>
+      <div class="amount-box source">
+        <input type="text" id="inputNominal" inputmode="numeric" placeholder="0" aria-label="Jumlah yang dikonversi" oninput="formatDanHitung(this)" />
+        <div class="currency">
+          <span class="currency-flag flag-id" id="flagSource" aria-label="Bendera Indonesia"></span>
+          <span id="prefixNominal">Rp</span>
         </div>
       </div>
+      <div class="swap-wrap">
+        <button type="button" class="swap-button" onclick="tukarArah()" aria-label="Tukar arah konversi">↕</button>
+      </div>
 
-    </div>
-
-    <!-- KOLOM KANAN: Hasil Kalkulasi (5 kolom) -->
-    <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 lg:sticky lg:top-24">
-      <div class="flex items-start justify-between gap-2 mb-6">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">Hasil Konversi Kurs</h2>
-          <p class="text-xs text-slate-500">Kalkulasi nominal diterima real-time</p>
-        </div>
-        <span id="statusBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 uppercase tracking-wide">
-          MENUNGGU INPUT
+      <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
+      <div class="result-amount" aria-live="polite">
+        <span class="result-value" id="hasilUtama">₱ 0.00</span>
+        <span class="currency">
+          <span class="currency-flag flag-ph" id="flagTarget" aria-label="Bendera Filipina"></span>
+          <span id="currencyTarget">PHP</span>
         </span>
       </div>
 
-      <!-- Display Hasil Utama (Gaya Card Ring Skor KPI) -->
-      <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-6 text-center mb-6">
-        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" id="labelHasilUtama">Total Diterima (PHP)</p>
-        <div class="text-3xl sm:text-4xl font-extrabold text-indigo-600 tracking-tight my-2 break-all" id="hasilUtama">
-          ₱ 0.00
-        </div>
-        <p class="text-xs text-slate-500" id="subHasilUtama">Rate aktif: Rp 0 / 1 PHP</p>
+      <div class="converter-actions">
+        <button type="button" class="primary-action" onclick="salinHasil()"><span id="btnPrimaryText">Salin hasil konversi</span></button>
+        <button type="button" class="secondary-action" onclick="document.getElementById('pengaturanKurs').scrollIntoView({ behavior: 'smooth' })">Atur nilai tukar</button>
       </div>
-
-      <!-- Rincian Perhitungan -->
-      <div class="space-y-3 mb-6">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Rincian Transaksi</h3>
-        
-        <div class="flex justify-between items-center text-sm py-2 border-b border-slate-100">
-          <span class="text-slate-500">Jenis Rate</span>
-          <span class="font-semibold text-slate-800" id="detailJenisRate">Rate Jual</span>
-        </div>
-        <div class="flex justify-between items-center text-sm py-2 border-b border-slate-100">
-          <span class="text-slate-500">Kurs Berlaku</span>
-          <span class="font-semibold text-slate-800" id="detailKurs">1 PHP = Rp 0</span>
-        </div>
-        <div class="flex justify-between items-center text-sm py-2 border-b border-slate-100">
-          <span class="text-slate-500">Nominal Awal</span>
-          <span class="font-semibold text-slate-800" id="detailAwal">Rp 0</span>
-        </div>
-        <div class="flex justify-between items-center text-sm py-2">
-          <span class="text-slate-500">Hasil Konversi</span>
-          <span class="font-bold text-indigo-600" id="detailAkhir">₱ 0.00</span>
-        </div>
-      </div>
-
-      <!-- Tombol Copy Ringkasan -->
-      <button type="button" onclick="salinHasil()" id="btnCopy"
-        class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-sm shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
-        <span id="btnCopyText">Salin Rincian Transaksi</span>
-      </button>
+      <p class="status-line" id="statusBadge">Menunggu input nominal dan rate</p>
     </div>
+  </section>
 
+  <main class="below-content">
+    <section class="support-card">
+      <div class="section-heading">
+        <h2>Parameter transaksi</h2>
+        <span>Kalkulasi real-time</span>
+      </div>
+      <h3>Jenis transaksi (rate aktif)</h3>
+      <div class="mode-options">
+        <button type="button" id="btnModeJual" class="mode-button active" onclick="setJenisRate('jual')">
+          <span>Rate Jual</span><span id="badgeRateJual">Rp 0</span>
+        </button>
+        <button type="button" id="btnModeBeli" class="mode-button" onclick="setJenisRate('beli')">
+          <span>Rate Beli</span><span id="badgeRateBeli">Rp 0</span>
+        </button>
+      </div>
+      <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
+      <div class="direction-options" aria-label="Arah konversi">
+        <button type="button" id="btnArahIDRtoPHP" class="direction-button active" onclick="setArah('IDR_TO_PHP')">IDR → PHP</button>
+        <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')">PHP → IDR</button>
+      </div>
+    </section>
+
+    <section class="support-card" id="pengaturanKurs">
+      <div class="section-heading">
+        <h2>Pengaturan rate manual</h2>
+        <span>Auto-save</span>
+      </div>
+      <p style="margin: -4px 0 15px; color: var(--muted); font-size: 12px;">Masukkan nilai untuk 1 PHP dalam Rupiah. Rate tersimpan otomatis di perangkat ini.</p>
+      <div class="rates-grid">
+        <div class="rate-field">
+          <label for="rateBeli">Rate Beli (IDR per 1 PHP)</label>
+          <div class="rate-input-wrap">
+            <span>Rp</span>
+            <input type="number" step="any" id="rateBeli" placeholder="Contoh: 280" oninput="hitung()" />
+          </div>
+          <p>Dipakai saat Anda membeli Peso dari user</p>
+        </div>
+        <div class="rate-field">
+          <label for="rateJual">Rate Jual (IDR per 1 PHP)</label>
+          <div class="rate-input-wrap">
+            <span>Rp</span>
+            <input type="number" step="any" id="rateJual" placeholder="Contoh: 292" oninput="hitung()" />
+          </div>
+          <p>Dipakai saat Anda menjual Peso ke user</p>
+        </div>
+      </div>
+      <div class="spread-row">
+        <span>Selisih (spread): <strong id="spreadText">Rp 0</strong></span>
+        <span>Rate disimpan otomatis</span>
+      </div>
+    </section>
+
+    <section class="support-card" id="rincian">
+      <div class="section-heading">
+        <h2>Rincian transaksi</h2>
+        <span id="statusDetail">Rate Jual</span>
+      </div>
+      <dl class="detail-grid">
+        <dt>Jenis rate</dt><dd id="detailJenisRate">Rate Jual</dd>
+        <dt>Kurs berlaku</dt><dd id="detailKurs">1 PHP = Rp 0</dd>
+        <dt>Nominal awal</dt><dd id="detailAwal">Rp 0</dd>
+        <dt>Hasil konversi</dt><dd id="detailAkhir">₱ 0.00</dd>
+      </dl>
+      <button type="button" onclick="salinHasil()" id="btnCopy"><span id="btnCopyText">Salin rincian transaksi</span></button>
+    </section>
   </main>
 
   <script>
-    let jenisRate = 'jual'; // 'jual' atau 'beli'
-    let arahKonversi = 'IDR_TO_PHP'; // 'IDR_TO_PHP' atau 'PHP_TO_IDR'
+    let jenisRate = 'jual';
+    let arahKonversi = 'IDR_TO_PHP';
     let nominalRaw = 0;
 
-    // Muat rate tersimpan saat halaman dibuka
     window.addEventListener('DOMContentLoaded', () => {
       const savedBeli = localStorage.getItem('kurs_php_beli');
       const savedJual = localStorage.getItem('kurs_php_jual');
@@ -270,37 +620,25 @@
 
     function setJenisRate(mode) {
       jenisRate = mode;
-      const btnJual = document.getElementById('btnModeJual');
-      const btnBeli = document.getElementById('btnModeBeli');
-
-      if (mode === 'jual') {
-        btnJual.className = "py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer";
-        btnBeli.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer";
-      } else {
-        btnBeli.className = "py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer";
-        btnJual.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer";
-      }
+      document.getElementById('btnModeJual').classList.toggle('active', mode === 'jual');
+      document.getElementById('btnModeBeli').classList.toggle('active', mode === 'beli');
       hitung();
     }
 
     function setArah(arah) {
       arahKonversi = arah;
-      const btnIDR = document.getElementById('btnArahIDRtoPHP');
-      const btnPHP = document.getElementById('btnArahPHPtoIDR');
-
-      if (arah === 'IDR_TO_PHP') {
-        btnIDR.className = "py-2 px-3 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-xs sm:text-sm transition cursor-pointer";
-        btnPHP.className = "py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition cursor-pointer";
-        document.getElementById('labelNominal').textContent = "Nominal Rupiah (IDR)";
-        document.getElementById('hintNominal').textContent = "Masukkan jumlah Rp";
-        document.getElementById('prefixNominal').textContent = "Rp";
-      } else {
-        btnPHP.className = "py-2 px-3 rounded-xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-700 font-semibold text-xs sm:text-sm transition cursor-pointer";
-        btnIDR.className = "py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition cursor-pointer";
-        document.getElementById('labelNominal').textContent = "Nominal Peso Filipina (PHP)";
-        document.getElementById('hintNominal').textContent = "Masukkan jumlah ₱";
-        document.getElementById('prefixNominal').textContent = "₱";
-      }
+      const idrToPhp = arah === 'IDR_TO_PHP';
+      document.getElementById('btnArahIDRtoPHP').classList.toggle('active', idrToPhp);
+      document.getElementById('btnArahPHPtoIDR').classList.toggle('active', !idrToPhp);
+      document.getElementById('labelNominal').textContent = idrToPhp
+        ? 'Jumlah dalam Rupiah (IDR)'
+        : 'Jumlah dalam Peso Filipina (PHP)';
+      document.getElementById('prefixNominal').textContent = idrToPhp ? 'IDR' : 'PHP';
+      document.getElementById('flagSource').className = `currency-flag ${idrToPhp ? 'flag-id' : 'flag-ph'}`;
+      document.getElementById('flagSource').setAttribute('aria-label', idrToPhp ? 'Bendera Indonesia' : 'Bendera Filipina');
+      document.getElementById('currencyTarget').textContent = idrToPhp ? 'PHP' : 'IDR';
+      document.getElementById('flagTarget').className = `currency-flag ${idrToPhp ? 'flag-ph' : 'flag-id'}`;
+      document.getElementById('flagTarget').setAttribute('aria-label', idrToPhp ? 'Bendera Filipina' : 'Bendera Indonesia');
       renderQuickButtons();
       hitung();
     }
@@ -311,30 +649,28 @@
 
     function renderQuickButtons() {
       const container = document.getElementById('quickButtons');
-      const presets = arahKonversi === 'IDR_TO_PHP' 
-        ? [100000, 500000, 1000000, 5000000] 
+      const presets = arahKonversi === 'IDR_TO_PHP'
+        ? [100000, 500000, 1000000, 5000000]
         : [500, 1000, 5000, 10000];
       const prefix = arahKonversi === 'IDR_TO_PHP' ? 'Rp ' : '₱ ';
 
-      container.innerHTML = presets.map(val => `
-        <button type="button" onclick="setNominalCepat(${val})" 
-          class="text-xs font-medium px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition cursor-pointer">
-          ${prefix}${val.toLocaleString('id-ID')}
+      container.innerHTML = presets.map(value => `
+        <button type="button" class="quick-button" onclick="setNominalCepat(${value})">
+          ${prefix}${value.toLocaleString('id-ID')}
         </button>
       `).join('');
     }
 
-    function setNominalCepat(val) {
-      nominalRaw = val;
-      document.getElementById('inputNominal').value = val.toLocaleString('id-ID');
+    function setNominalCepat(value) {
+      nominalRaw = value;
+      document.getElementById('inputNominal').value = value.toLocaleString('id-ID');
       hitung();
     }
 
-    function formatDanHitung(el) {
-      // Ambil hanya angka dan titik desimal
-      let clean = el.value.replace(/[^0-9]/g, '');
-      nominalRaw = clean ? parseFloat(clean) : 0;
-      el.value = clean ? nominalRaw.toLocaleString('id-ID') : '';
+    function formatDanHitung(input) {
+      const clean = input.value.replace(/[^0-9]/g, '');
+      nominalRaw = clean ? Number(clean) : 0;
+      input.value = clean ? nominalRaw.toLocaleString('id-ID') : '';
       hitung();
     }
 
@@ -342,49 +678,45 @@
       const rateBeli = parseFloat(document.getElementById('rateBeli').value) || 0;
       const rateJual = parseFloat(document.getElementById('rateJual').value) || 0;
 
-      // Simpan ke localStorage
       localStorage.setItem('kurs_php_beli', rateBeli || '');
       localStorage.setItem('kurs_php_jual', rateJual || '');
 
-      // Update badge di tombol
       document.getElementById('badgeRateBeli').textContent = `Rp ${rateBeli.toLocaleString('id-ID')}`;
       document.getElementById('badgeRateJual').textContent = `Rp ${rateJual.toLocaleString('id-ID')}`;
 
-      // Hitung spread
       const spread = rateJual - rateBeli;
-      document.getElementById('spreadText').textContent = `Rp ${spread.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+      document.getElementById('spreadText').textContent =
+        `Rp ${spread.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
 
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
       const statusBadge = document.getElementById('statusBadge');
+      const statusDetail = jenisRate === 'jual' ? 'Rate Jual' : 'Rate Beli';
+      document.getElementById('statusDetail').textContent = statusDetail;
+      document.getElementById('displayRate').textContent =
+        `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+      statusBadge.textContent = rateAktif > 0 && nominalRaw > 0
+        ? `${statusDetail} aktif`
+        : 'Menunggu input nominal dan rate';
 
-      if (rateAktif > 0 && nominalRaw > 0) {
-        statusBadge.textContent = jenisRate === 'jual' ? 'RATE JUAL AKTIF' : 'RATE BELI AKTIF';
-        statusBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wide";
-      } else {
-        statusBadge.textContent = "MENUNGGU INPUT";
-        statusBadge.className = "text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 uppercase tracking-wide";
-      }
-
-      let hasilText = '';
-      let awalText = '';
-
+      let hasilText;
+      let awalText;
       if (arahKonversi === 'IDR_TO_PHP') {
-        document.getElementById('labelHasilUtama').textContent = "Total Diterima (PHP)";
-        const hasilPHP = rateAktif > 0 ? (nominalRaw / rateAktif) : 0;
+        document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
+        const hasilPHP = rateAktif > 0 ? nominalRaw / rateAktif : 0;
         hasilText = `₱ ${hasilPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         awalText = `Rp ${nominalRaw.toLocaleString('id-ID')}`;
       } else {
-        document.getElementById('labelHasilUtama').textContent = "Total Diterima (IDR)";
+        document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
         const hasilIDR = nominalRaw * rateAktif;
         hasilText = `Rp ${Math.round(hasilIDR).toLocaleString('id-ID')}`;
         awalText = `₱ ${nominalRaw.toLocaleString('en-US')}`;
       }
 
       document.getElementById('hasilUtama').textContent = hasilText;
-      document.getElementById('subHasilUtama').textContent = `Rate aktif: Rp ${rateAktif.toLocaleString('id-ID')} / 1 PHP`;
-      
-      document.getElementById('detailJenisRate').textContent = jenisRate === 'jual' ? 'Rate Jual (IDR → PHP)' : 'Rate Beli (PHP → IDR)';
-      document.getElementById('detailKurs').textContent = `1 PHP = Rp ${rateAktif.toLocaleString('id-ID')}`;
+      document.getElementById('detailJenisRate').textContent =
+        jenisRate === 'jual' ? 'Rate Jual (IDR → PHP)' : 'Rate Beli (PHP → IDR)';
+      document.getElementById('detailKurs').textContent =
+        `1 PHP = Rp ${rateAktif.toLocaleString('id-ID')}`;
       document.getElementById('detailAwal').textContent = awalText;
       document.getElementById('detailAkhir').textContent = hasilText;
     }
@@ -408,15 +740,19 @@
       const kurs = document.getElementById('detailKurs').textContent;
       const awal = document.getElementById('detailAwal').textContent;
       const akhir = document.getElementById('detailAkhir').textContent;
+      const teks = `Kalkulasi Kurs IDR ↔ PHP\nJenis: ${jenis}\nKurs: ${kurs}\nNominal: ${awal}\nHasil: ${akhir}`;
 
-      const teks = `*Kalkulasi Kurs IDR ↔ PHP*\n• Jenis: ${jenis}\n• Kurs: ${kurs}\n• Nominal: ${awal}\n• Hasil: *${akhir}*`;
-      
       navigator.clipboard.writeText(teks).then(() => {
-        const btnText = document.getElementById('btnCopyText');
-        btnText.textContent = "Tersalin ke Clipboard!";
-        setTimeout(() => {
-          btnText.textContent = "Salin Rincian Transaksi";
+        const detailButton = document.getElementById('btnCopyText');
+        const primaryButton = document.getElementById('btnPrimaryText');
+        detailButton.textContent = 'Tersalin ke clipboard!';
+        primaryButton.textContent = 'Tersalin ke clipboard!';
+        window.setTimeout(() => {
+          detailButton.textContent = 'Salin rincian transaksi';
+          primaryButton.textContent = 'Salin hasil konversi';
         }, 2000);
+      }).catch(() => {
+        document.getElementById('statusBadge').textContent = 'Tidak dapat menyalin. Periksa izin clipboard browser.';
       });
     }
   </script>
