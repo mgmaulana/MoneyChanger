@@ -292,6 +292,32 @@
       color: var(--green-900);
     }
 
+    .fee-breakdown {
+      display: grid;
+      gap: 9px;
+      margin-top: 15px;
+      border-top: 1px solid #edf0ea;
+      padding-top: 12px;
+      font-size: 11px;
+    }
+
+    .fee-breakdown > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .fee-breakdown span { color: var(--muted); }
+    .fee-breakdown strong { text-align: right; }
+    .fee-breakdown .fee-total {
+      margin-top: 2px;
+      border-top: 1px solid #edf0ea;
+      padding-top: 10px;
+      color: var(--green-900);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .converter-actions {
       display: grid;
       gap: 7px;
@@ -526,13 +552,7 @@
         <span class="brand-mark">↔</span>
         <span>Kurs IDR ↔ PHP</span>
       </a>
-      <nav class="nav-links" aria-label="Navigasi utama">
-        <a href="#kalkulator">Kirim mata uang</a>
-        <a href="#pengaturanKurs">Terima berita kurs</a>
-        <a href="#rincian">Bandingkan kurs bank</a>
-      </nav>
       <div class="nav-actions">
-        <button type="button" class="nav-action" onclick="isiContoh()">Isi Contoh</button>
         <button type="button" class="nav-action" onclick="resetForm()">Reset</button>
       </div>
     </div>
@@ -540,7 +560,13 @@
 
   <section class="hero" id="kalkulator">
     <div class="converter">
-      <p class="rate-heading">Nilai tukar berdasarkan rate aktif</p>
+      <div class="live-rate-tools">
+        <div class="live-rate-info">
+          <strong id="liveRateValue">Kurs referensi: menunggu data</strong>
+          <span id="liveRateStatus">Mengambil kurs otomatis...</span>
+        </div>
+        <button type="button" class="refresh-button" id="btnRefreshRate" onclick="perbaruiKurs()">Perbarui</button>
+      </div>
       <p class="rate-value" id="displayRate">1 PHP = Rp 0</p>
 
       <label class="amount-label" for="inputNominal" id="labelNominal">Jumlah dalam Rupiah (IDR)</label>
@@ -551,11 +577,12 @@
           <span id="prefixNominal">Rp</span>
         </div>
       </div>
+      <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
       <div class="swap-wrap">
         <button type="button" class="swap-button" onclick="tukarArah()" aria-label="Tukar arah konversi">↕</button>
       </div>
 
-      <label class="amount-label" id="labelHasilUtama">Dikonversi menjadi</label>
+      <label class="amount-label" id="labelHasilUtama">Total yang harus dibayar</label>
       <div class="result-amount" aria-live="polite">
         <span class="result-value" id="hasilUtama">₱ 0.00</span>
         <span class="currency">
@@ -564,149 +591,56 @@
         </span>
       </div>
 
-      <div class="converter-actions">
-        <button type="button" class="primary-action" onclick="salinHasil()"><span id="btnPrimaryText">Salin hasil konversi</span></button>
-        <button type="button" class="secondary-action" onclick="document.getElementById('pengaturanKurs').scrollIntoView({ behavior: 'smooth' })">Atur nilai tukar</button>
-      </div>
-      <p class="status-line" id="statusBadge">Menunggu input nominal dan rate</p>
-    </div>
-  </section>
-
-  <main class="below-content">
-    <section class="support-card">
-      <div class="section-heading">
-        <h2>Parameter transaksi</h2>
-        <span>Kalkulasi real-time</span>
-      </div>
-      <h3>Jenis transaksi (rate aktif)</h3>
-      <div class="mode-options">
-        <button type="button" id="btnModeJual" class="mode-button active" onclick="setJenisRate('jual')">
-          <span>Rate Jual</span><span id="badgeRateJual">Rp 0</span>
-        </button>
-        <button type="button" id="btnModeBeli" class="mode-button" onclick="setJenisRate('beli')">
-          <span>Rate Beli</span><span id="badgeRateBeli">Rp 0</span>
-        </button>
-      </div>
-      <div class="quick-buttons" id="quickButtons" aria-label="Pilihan nominal cepat"></div>
       <div class="direction-options" aria-label="Arah konversi">
         <button type="button" id="btnArahIDRtoPHP" class="direction-button active" onclick="setArah('IDR_TO_PHP')">IDR → PHP</button>
         <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')">PHP → IDR</button>
       </div>
-    </section>
 
-    <section class="support-card" id="pengaturanKurs">
-      <div class="section-heading">
-        <h2>Sumber kurs</h2>
-        <span>Auto-save</span>
+      <div class="fee-breakdown" aria-live="polite">
+        <div><span>Nominal sesuai kurs</span><strong id="detailAwal">Rp 0</strong></div>
+        <div><span>Biaya tambahan (Rp 50.000)</span><strong id="detailBiaya">Rp 50.000</strong></div>
+        <div class="fee-total"><span>Total yang harus dibayar</span><strong id="detailAkhir">₱ 0.00</strong></div>
       </div>
-      <p style="margin: -4px 0 12px; color: var(--muted); font-size: 12px;">Pilih kurs online atau masukkan rate sendiri. Rate tersimpan otomatis di perangkat ini.</p>
-      <div class="mode-options" aria-label="Mode sumber kurs">
-        <button type="button" id="btnModeOtomatis" class="mode-button active" onclick="setModeKurs('otomatis')">Kurs Otomatis</button>
-        <button type="button" id="btnModeManual" class="mode-button" onclick="setModeKurs('manual')">Input Manual</button>
-      </div>
-      <div class="live-rate-tools">
-        <div class="live-rate-info">
-          <strong id="liveRateValue">Kurs referensi: menunggu data</strong>
-          <span id="liveRateStatus">Sumber: Frankfurter API (referensi ECB); pembaruan berkala, bukan real-time pasar.</span>
-        </div>
-        <button type="button" class="refresh-button" id="btnRefreshRate" onclick="perbaruiKurs()">Perbarui</button>
-      </div>
-      <div class="rates-grid">
-        <div class="rate-field">
-          <label for="rateBeli">Rate Beli (IDR per 1 PHP)</label>
-          <div class="rate-input-wrap">
-            <span>Rp</span>
-            <input type="number" step="any" id="rateBeli" placeholder="Contoh: 280" oninput="hitung()" />
-          </div>
-          <p>Dipakai saat Anda membeli Peso dari user</p>
-        </div>
-        <div class="rate-field">
-          <label for="rateJual">Rate Jual (IDR per 1 PHP)</label>
-          <div class="rate-input-wrap">
-            <span>Rp</span>
-            <input type="number" step="any" id="rateJual" placeholder="Contoh: 292" oninput="hitung()" />
-          </div>
-          <p>Dipakai saat Anda menjual Peso ke user</p>
-        </div>
-      </div>
-      <div class="spread-row">
-        <span>Selisih (spread): <strong id="spreadText">Rp 0</strong></span>
-        <span>Rate disimpan otomatis</span>
-      </div>
-    </section>
 
-    <section class="support-card" id="rincian">
-      <div class="section-heading">
-        <h2>Rincian transaksi</h2>
-        <span id="statusDetail">Rate Jual</span>
+      <div class="converter-actions">
+        <button type="button" class="primary-action" onclick="salinHasil()"><span id="btnPrimaryText">Salin rincian pembayaran</span></button>
       </div>
-      <dl class="detail-grid">
-        <dt>Jenis rate</dt><dd id="detailJenisRate">Rate Jual</dd>
-        <dt>Kurs berlaku</dt><dd id="detailKurs">1 PHP = Rp 0</dd>
-        <dt>Nominal awal</dt><dd id="detailAwal">Rp 0</dd>
-        <dt>Hasil konversi</dt><dd id="detailAkhir">₱ 0.00</dd>
-      </dl>
-      <button type="button" onclick="salinHasil()" id="btnCopy"><span id="btnCopyText">Salin rincian transaksi</span></button>
-    </section>
-  </main>
+      <p class="status-line" id="statusBadge">Menunggu kurs dan nominal</p>
+    </div>
+  </section>
 
   <script>
     let jenisRate = 'jual';
     let arahKonversi = 'IDR_TO_PHP';
     let nominalRaw = 0;
-    let modeKurs = 'otomatis';
+    const savedRate = Number(localStorage.getItem('kurs_php_reference'))
+      || Number(localStorage.getItem('kurs_php_jual'))
+      || Number(localStorage.getItem('kurs_php_beli'))
+      || 0;
+    let rateBeli = savedRate;
+    let rateJual = savedRate;
     let refreshKursTimer = null;
     let sedangMemperbaruiKurs = false;
     const INTERVAL_KURS = 30 * 60 * 1000;
+    const BIAYA_TAMBAHAN_IDR = 50000;
 
     window.addEventListener('DOMContentLoaded', async () => {
-      const savedBeli = localStorage.getItem('kurs_php_beli');
-      const savedJual = localStorage.getItem('kurs_php_jual');
-      const savedMode = localStorage.getItem('kurs_mode');
-      if (savedBeli) document.getElementById('rateBeli').value = savedBeli;
-      if (savedJual) document.getElementById('rateJual').value = savedJual;
-      modeKurs = savedMode === 'manual' ? 'manual' : 'otomatis';
-      sinkronkanModeKurs();
+      if (savedRate > 0) {
+        document.getElementById('liveRateValue').textContent =
+          `Kurs tersimpan: 1 PHP = Rp ${savedRate.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+        const savedDate = localStorage.getItem('kurs_php_date');
+        document.getElementById('liveRateStatus').textContent = savedDate
+          ? `Kurs referensi Frankfurter API • tanggal data: ${savedDate}. Sedang memeriksa pembaruan.`
+          : 'Menggunakan kurs tersimpan sementara, sedang memeriksa pembaruan.';
+      }
       renderQuickButtons();
       hitung();
-      if (modeKurs === 'otomatis') {
-        await perbaruiKurs();
-        refreshKursTimer = window.setInterval(perbaruiKurs, INTERVAL_KURS);
-      } else {
-        document.getElementById('liveRateStatus').textContent = 'Mode manual aktif. Masukkan kurs Anda sendiri.';
-      }
+      await perbaruiKurs();
+      refreshKursTimer = window.setInterval(perbaruiKurs, INTERVAL_KURS);
     });
 
-    function setModeKurs(mode) {
-      modeKurs = mode;
-      localStorage.setItem('kurs_mode', mode);
-      sinkronkanModeKurs();
-
-      if (refreshKursTimer) {
-        window.clearInterval(refreshKursTimer);
-        refreshKursTimer = null;
-      }
-
-      if (mode === 'otomatis') {
-        perbaruiKurs();
-        refreshKursTimer = window.setInterval(perbaruiKurs, INTERVAL_KURS);
-      } else {
-        document.getElementById('liveRateStatus').textContent = 'Mode manual aktif. Masukkan kurs Anda sendiri.';
-        hitung();
-      }
-    }
-
-    function sinkronkanModeKurs() {
-      const otomatis = modeKurs === 'otomatis';
-      document.getElementById('btnModeOtomatis').classList.toggle('active', otomatis);
-      document.getElementById('btnModeManual').classList.toggle('active', !otomatis);
-      document.getElementById('rateBeli').disabled = otomatis;
-      document.getElementById('rateJual').disabled = otomatis;
-      document.getElementById('btnRefreshRate').disabled = !otomatis || sedangMemperbaruiKurs;
-    }
-
     async function perbaruiKurs() {
-      if (modeKurs !== 'otomatis' || sedangMemperbaruiKurs) return;
+      if (sedangMemperbaruiKurs) return;
 
       sedangMemperbaruiKurs = true;
       const tombol = document.getElementById('btnRefreshRate');
@@ -724,58 +658,46 @@
         if (!response.ok) throw new Error(`Layanan kurs merespons HTTP ${response.status}`);
 
         const data = await response.json();
-        if (modeKurs !== 'otomatis') return;
         const kursPasar = Number(data.rates && data.rates.IDR);
         if (!Number.isFinite(kursPasar) || kursPasar <= 0 || !/^\d{4}-\d{2}-\d{2}$/.test(data.date || '')) {
           throw new Error('Format data kurs dari layanan tidak valid');
         }
 
-        const inputBeli = document.getElementById('rateBeli');
-        const inputJual = document.getElementById('rateJual');
-        const rateBeliSebelumnya = Number(inputBeli.value) || 0;
-        const rateJualSebelumnya = Number(inputJual.value) || 0;
-        const spreadSebelumnya = rateBeliSebelumnya > 0 && rateJualSebelumnya > 0
-          ? rateJualSebelumnya - rateBeliSebelumnya
-          : 0;
-
-        inputBeli.value = Math.max(0.01, kursPasar - spreadSebelumnya / 2).toFixed(2);
-        inputJual.value = Math.max(0.01, kursPasar + spreadSebelumnya / 2).toFixed(2);
+        rateBeli = kursPasar;
+        rateJual = kursPasar;
+        localStorage.setItem('kurs_php_reference', kursPasar.toFixed(2));
+        localStorage.setItem('kurs_php_beli', rateBeli.toFixed(2));
+        localStorage.setItem('kurs_php_jual', rateJual.toFixed(2));
         const tanggalKurs = new Date(`${data.date}T00:00:00Z`).toLocaleDateString('id-ID', {
           day: 'numeric',
           month: 'short',
           year: 'numeric',
           timeZone: 'UTC'
         });
+        localStorage.setItem('kurs_php_date', tanggalKurs);
         document.getElementById('liveRateValue').textContent =
           `Referensi pasar: 1 PHP = Rp ${kursPasar.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
         document.getElementById('liveRateStatus').textContent =
           `Frankfurter API (referensi ECB) • tanggal data: ${tanggalKurs}. Cek otomatis setiap 30 menit.`;
         hitung();
       } catch (error) {
-        if (modeKurs !== 'otomatis') return;
         const message = error.name === 'AbortError'
           ? 'Permintaan kurs melewati batas waktu.'
           : error.message;
         document.getElementById('liveRateStatus').textContent =
-          `Gagal memperbarui kurs: ${message}. Rate terakhir tetap digunakan; coba lagi atau pilih input manual.`;
+          `Gagal memperbarui kurs: ${message}. ${rateJual > 0 ? 'Kurs tersimpan terakhir tetap digunakan.' : 'Periksa koneksi internet lalu coba lagi.'}`;
       } finally {
         window.clearTimeout(timeout);
         sedangMemperbaruiKurs = false;
         tombol.textContent = 'Perbarui';
-        sinkronkanModeKurs();
+        tombol.disabled = false;
       }
-    }
-
-    function setJenisRate(mode) {
-      jenisRate = mode;
-      document.getElementById('btnModeJual').classList.toggle('active', mode === 'jual');
-      document.getElementById('btnModeBeli').classList.toggle('active', mode === 'beli');
-      hitung();
     }
 
     function setArah(arah) {
       arahKonversi = arah;
       const idrToPhp = arah === 'IDR_TO_PHP';
+      jenisRate = idrToPhp ? 'jual' : 'beli';
       document.getElementById('btnArahIDRtoPHP').classList.toggle('active', idrToPhp);
       document.getElementById('btnArahPHPtoIDR').classList.toggle('active', !idrToPhp);
       document.getElementById('labelNominal').textContent = idrToPhp
@@ -823,59 +745,39 @@
     }
 
     function hitung() {
-      const rateBeli = parseFloat(document.getElementById('rateBeli').value) || 0;
-      const rateJual = parseFloat(document.getElementById('rateJual').value) || 0;
-
-      localStorage.setItem('kurs_php_beli', rateBeli || '');
-      localStorage.setItem('kurs_php_jual', rateJual || '');
-
-      document.getElementById('badgeRateBeli').textContent = `Rp ${rateBeli.toLocaleString('id-ID')}`;
-      document.getElementById('badgeRateJual').textContent = `Rp ${rateJual.toLocaleString('id-ID')}`;
-
-      const spread = rateJual - rateBeli;
-      document.getElementById('spreadText').textContent =
-        `Rp ${spread.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
-      const statusBadge = document.getElementById('statusBadge');
-      const statusDetail = jenisRate === 'jual' ? 'Rate Jual' : 'Rate Beli';
-      document.getElementById('statusDetail').textContent = statusDetail;
       document.getElementById('displayRate').textContent =
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-      statusBadge.textContent = rateAktif > 0 && nominalRaw > 0
-        ? `${statusDetail} aktif`
-        : 'Menunggu input nominal dan rate';
+      document.getElementById('labelHasilUtama').textContent =
+        `Total yang harus dibayar (${arahKonversi === 'IDR_TO_PHP' ? 'PHP' : 'IDR'})`;
+      document.getElementById('statusBadge').textContent = rateAktif > 0
+        ? (nominalRaw > 0 ? 'Kurs otomatis aktif' : 'Masukkan nominal untuk menghitung total')
+        : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
 
-      let hasilText;
-      let awalText;
+      let nominalKonversi;
+      let biayaText;
+      let totalText;
       if (arahKonversi === 'IDR_TO_PHP') {
-        document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
-        const hasilPHP = rateAktif > 0 ? nominalRaw / rateAktif : 0;
-        hasilText = `₱ ${hasilPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        awalText = `Rp ${nominalRaw.toLocaleString('id-ID')}`;
+        nominalKonversi = rateAktif > 0 ? nominalRaw / rateAktif : 0;
+        const biayaPHP = nominalRaw > 0 && rateAktif > 0 ? BIAYA_TAMBAHAN_IDR / rateAktif : 0;
+        const totalPHP = nominalKonversi + biayaPHP;
+        biayaText = `₱ ${biayaPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        totalText = `₱ ${totalPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       } else {
-        document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
-        const hasilIDR = nominalRaw * rateAktif;
-        hasilText = `Rp ${Math.round(hasilIDR).toLocaleString('id-ID')}`;
-        awalText = `₱ ${nominalRaw.toLocaleString('en-US')}`;
+        nominalKonversi = nominalRaw * rateAktif;
+        const biayaIDR = nominalRaw > 0 && rateAktif > 0 ? BIAYA_TAMBAHAN_IDR : 0;
+        const totalIDR = nominalKonversi + biayaIDR;
+        biayaText = `Rp ${biayaIDR.toLocaleString('id-ID')}`;
+        totalText = `Rp ${Math.round(totalIDR).toLocaleString('id-ID')}`;
       }
 
-      document.getElementById('hasilUtama').textContent = hasilText;
-      document.getElementById('detailJenisRate').textContent =
-        jenisRate === 'jual' ? 'Rate Jual (IDR → PHP)' : 'Rate Beli (PHP → IDR)';
-      document.getElementById('detailKurs').textContent =
-        `1 PHP = Rp ${rateAktif.toLocaleString('id-ID')}`;
-      document.getElementById('detailAwal').textContent = awalText;
-      document.getElementById('detailAkhir').textContent = hasilText;
-    }
-
-    function isiContoh() {
-      setModeKurs('manual');
-      document.getElementById('rateBeli').value = 282;
-      document.getElementById('rateJual').value = 292;
-      setJenisRate('jual');
-      setArah('IDR_TO_PHP');
-      setNominalCepat(1000000);
+      const nominalText = arahKonversi === 'IDR_TO_PHP'
+        ? `₱ ${nominalKonversi.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        : `Rp ${Math.round(nominalKonversi).toLocaleString('id-ID')}`;
+      document.getElementById('hasilUtama').textContent = totalText;
+      document.getElementById('detailAwal').textContent = nominalText;
+      document.getElementById('detailBiaya').textContent = biayaText;
+      document.getElementById('detailAkhir').textContent = totalText;
     }
 
     function resetForm() {
@@ -885,20 +787,17 @@
     }
 
     function salinHasil() {
-      const jenis = document.getElementById('detailJenisRate').textContent;
-      const kurs = document.getElementById('detailKurs').textContent;
-      const awal = document.getElementById('detailAwal').textContent;
-      const akhir = document.getElementById('detailAkhir').textContent;
-      const teks = `Kalkulasi Kurs IDR ↔ PHP\nJenis: ${jenis}\nKurs: ${kurs}\nNominal: ${awal}\nHasil: ${akhir}`;
+      const kurs = document.getElementById('displayRate').textContent;
+      const nominal = document.getElementById('detailAwal').textContent;
+      const biaya = document.getElementById('detailBiaya').textContent;
+      const total = document.getElementById('detailAkhir').textContent;
+      const teks = `Total pembayaran IDR ↔ PHP\n${kurs}\nNominal sesuai kurs: ${nominal}\nBiaya tambahan: ${biaya}\nTotal harus dibayar: ${total}`;
 
       navigator.clipboard.writeText(teks).then(() => {
-        const detailButton = document.getElementById('btnCopyText');
         const primaryButton = document.getElementById('btnPrimaryText');
-        detailButton.textContent = 'Tersalin ke clipboard!';
         primaryButton.textContent = 'Tersalin ke clipboard!';
         window.setTimeout(() => {
-          detailButton.textContent = 'Salin rincian transaksi';
-          primaryButton.textContent = 'Salin hasil konversi';
+          primaryButton.textContent = 'Salin rincian pembayaran';
         }, 2000);
       }).catch(() => {
         document.getElementById('statusBadge').textContent = 'Tidak dapat menyalin. Periksa izin clipboard browser.';
