@@ -860,8 +860,6 @@
             </span>
           </div>
           <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
-            <div><span>Nominal hasil konversi</span><strong id="idrBase">Rp 0</strong></div>
-            <div><span>Biaya pembayaran (7,5%)</span><strong id="idrFee">Rp 0</strong></div>
             <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
           </div>
         </div>
@@ -1082,8 +1080,6 @@
         const totalBayarIdr = nominalIdr + biayaIdr;
         const formatRupiah = value => `Rp ${value.toLocaleString('id-ID')}`;
 
-        document.getElementById('idrBase').textContent = formatRupiah(nominalIdr);
-        document.getElementById('idrFee').textContent = formatRupiah(biayaIdr);
         document.getElementById('idrTotal').textContent = formatRupiah(totalBayarIdr);
         hasilText = formatRupiah(totalBayarIdr);
       }
@@ -1102,7 +1098,7 @@
       const hasil = document.getElementById('hasilUtama').textContent;
       const nominal = document.getElementById('inputNominal').value || '0';
       const detailPembayaran = arahKonversi === 'PHP_TO_IDR'
-        ? `\nNominal hasil konversi: ${document.getElementById('idrBase').textContent}\nBiaya pembayaran (7,5%): ${document.getElementById('idrFee').textContent}\nTotal yang dibayarkan: ${document.getElementById('idrTotal').textContent}`
+        ? `\nTotal yang dibayarkan: ${document.getElementById('idrTotal').textContent}`
         : `\nHasil konversi: ${hasil}`;
       const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}\nNominal: ${nominal}${detailPembayaran}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
 
