@@ -1042,7 +1042,8 @@
     function salinHasil() {
       const kurs = document.getElementById('displayRate').textContent;
       const hasil = document.getElementById('hasilUtama').textContent;
-      const teks = `Kalkulasi Kurs IDR ↔ PHP\n${kurs}\nNominal: ${document.getElementById('inputNominal').value || '0'}\nHasil konversi: ${hasil}`;
+      const nominal = document.getElementById('inputNominal').value || '0';
+      const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}\nNominal: ${nominal}\nHasil konversi: ${hasil}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
 
       navigator.clipboard.writeText(teks).then(() => {
         const primaryButton = document.getElementById('btnPrimaryText');
