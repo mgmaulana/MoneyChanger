@@ -735,9 +735,55 @@
     .contact-icon.whatsapp { background: #25d366; }
     .contact-icon.telegram { background: #229ed9; }
 
+    .brand {
+      gap: 12px;
+      white-space: normal;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      flex: none;
+      filter: drop-shadow(0 3px 5px rgb(0 0 0 / 25%));
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 1px;
+    }
+
+    .brand-name {
+      color: #fff;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      line-height: 1;
+    }
+
+    .brand-service {
+      color: #f5a640;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      line-height: 1.15;
+    }
+
+    .brand-tagline {
+      margin-top: 3px;
+      color: #c8d8f2;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+
     @media (max-width: 420px) {
       .hero::after { right: -260px; }
       .contact-link { justify-content: flex-start; }
+      .brand { gap: 8px; }
+      .brand-logo { width: 42px; height: 42px; }
+      .brand-name { font-size: 19px; }
+      .brand-service { font-size: 12px; }
+      .brand-tagline { font-size: 7px; }
     }
   </style>
 </head>
@@ -745,8 +791,18 @@
   <header class="topbar">
     <div class="nav-inner">
       <a class="brand" href="#" aria-label="Kalkulator Kurs IDR dan PHP">
-        <span class="brand-mark">↔</span>
-        <span>Kurs IDR ↔ PHP</span>
+        <svg class="brand-logo" viewBox="0 0 64 64" role="img" aria-label="Logo MGM Exchanger">
+          <path d="M25 8v5M25 47v5M5 30h5M40 30h5M11 16l4 4M35 40l4 4M39 16l-4 4M15 40l-4 4" stroke="#d8e5f7" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="25" cy="30" r="15" fill="#163a73" stroke="#d8e5f7" stroke-width="4"/>
+          <circle cx="25" cy="30" r="6" fill="#0b1f45" stroke="#8fa9cf" stroke-width="3"/>
+          <path d="M8 53 24 38l9 8L53 24" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="m45 22 11-2-2 11" fill="none" stroke="#fbbf24" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-copy">
+          <span class="brand-name">MGM</span>
+          <span class="brand-service">EXCHANGER</span>
+          <span class="brand-tagline">Kalkulator Kurs IDR ↔ PHP</span>
+        </span>
       </a>
       <div class="nav-actions">
         <button type="button" class="nav-action" onclick="resetForm()">Reset</button>
