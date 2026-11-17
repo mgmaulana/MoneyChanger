@@ -250,6 +250,27 @@
       font-weight: 700;
     }
 
+    .payment-breakdown {
+      display: grid;
+      gap: 9px;
+      margin-top: 15px;
+      border-top: 1px solid var(--line);
+      padding-top: 13px;
+      font-size: 13px;
+    }
+
+    .payment-breakdown[hidden] { display: none; }
+    .payment-breakdown div { display: flex; justify-content: space-between; gap: 12px; }
+    .payment-breakdown span { color: var(--muted); }
+    .payment-breakdown strong { text-align: right; }
+    .payment-breakdown .payment-total {
+      margin-top: 2px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      color: var(--blue-900);
+      font-size: 15px;
+    }
+
     .quick-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -843,6 +864,12 @@
         </span>
       </div>
 
+      <div class="payment-breakdown" id="paymentBreakdown" aria-live="polite" hidden>
+        <div><span>Nominal hasil konversi</span><strong id="idrBase">Rp 0</strong></div>
+        <div><span>Biaya pembayaran (7,5%)</span><strong id="idrFee">Rp 0</strong></div>
+        <div class="payment-total"><span>Total yang dibayarkan</span><strong id="idrTotal">Rp 0</strong></div>
+      </div>
+
       <div class="direction-options" aria-label="Arah konversi">
         <button type="button" id="btnArahIDRtoPHP" class="direction-button active" onclick="setArah('IDR_TO_PHP')">IDR → PHP</button>
         <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')">PHP → IDR</button>
@@ -1014,11 +1041,17 @@
 
     function hitung() {
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
+      const pembayaranIdr = arahKonversi === 'PHP_TO_IDR';
       document.getElementById('displayRate').textContent =
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-      document.getElementById('labelHasilUtama').textContent = 'Dikonversi menjadi';
+      document.getElementById('labelHasilUtama').textContent = pembayaranIdr
+        ? 'Total pembayaran (termasuk biaya 7,5%)'
+        : 'Dikonversi menjadi';
+      document.getElementById('paymentBreakdown').hidden = !pembayaranIdr;
       document.getElementById('statusBadge').textContent = rateAktif > 0
-        ? (nominalRaw > 0 ? 'Kurs otomatis aktif' : 'Masukkan nominal untuk menghitung total')
+        ? (nominalRaw > 0
+          ? (pembayaranIdr ? 'Total termasuk biaya pembayaran 7,5%' : 'Kurs otomatis aktif')
+          : 'Masukkan nominal untuk menghitung total')
         : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
 
       let hasilText;
@@ -1026,8 +1059,15 @@
         const hasilPHP = rateAktif > 0 ? nominalRaw / rateAktif : 0;
         hasilText = `₱ ${hasilPHP.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       } else {
-        const hasilIDR = nominalRaw * rateAktif;
-        hasilText = `Rp ${Math.round(hasilIDR).toLocaleString('id-ID')}`;
+        const nominalIdr = Math.round(nominalRaw * rateAktif);
+        const biayaIdr = Math.round(nominalIdr * 0.075);
+        const totalBayarIdr = nominalIdr + biayaIdr;
+        const formatRupiah = value => `Rp ${value.toLocaleString('id-ID')}`;
+
+        document.getElementById('idrBase').textContent = formatRupiah(nominalIdr);
+        document.getElementById('idrFee').textContent = formatRupiah(biayaIdr);
+        document.getElementById('idrTotal').textContent = formatRupiah(totalBayarIdr);
+        hasilText = formatRupiah(totalBayarIdr);
       }
 
       document.getElementById('hasilUtama').textContent = hasilText;
@@ -1043,7 +1083,10 @@
       const kurs = document.getElementById('displayRate').textContent;
       const hasil = document.getElementById('hasilUtama').textContent;
       const nominal = document.getElementById('inputNominal').value || '0';
-      const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}\nNominal: ${nominal}\nHasil konversi: ${hasil}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
+      const detailPembayaran = arahKonversi === 'PHP_TO_IDR'
+        ? `\nNominal hasil konversi: ${document.getElementById('idrBase').textContent}\nBiaya pembayaran (7,5%): ${document.getElementById('idrFee').textContent}\nTotal yang dibayarkan: ${document.getElementById('idrTotal').textContent}`
+        : `\nHasil konversi: ${hasil}`;
+      const teks = `Kalkulasi Kurs MGM EXCHANGER\n${kurs}\nNominal: ${nominal}${detailPembayaran}\n\nKontak:\nWhatsApp: +62 831-4328-8500\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank BCA\nNo. rekening: 2990684785`;
 
       navigator.clipboard.writeText(teks).then(() => {
         const primaryButton = document.getElementById('btnPrimaryText');
