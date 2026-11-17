@@ -562,6 +562,103 @@
       .rates-grid { grid-template-columns: 1fr; }
       .mode-button { padding: 9px 8px; font-size: 11px; }
     }
+
+    .nav-inner {
+      max-width: 1200px;
+      min-height: 72px;
+      padding: 12px 28px;
+    }
+
+    .brand { font-size: 18px; }
+    .brand-mark { width: 42px; height: 42px; font-size: 21px; }
+    .nav-action { padding: 10px 15px; border-radius: 10px; font-size: 14px; }
+
+    .hero {
+      min-height: 510px;
+      padding: 48px 20px 82px;
+    }
+
+    .converter {
+      width: min(100%, 540px);
+      padding: 32px 30px 28px;
+      border-radius: 28px;
+    }
+
+    .live-rate-tools {
+      margin: 18px 0;
+      border-radius: 12px;
+      padding: 15px 16px;
+    }
+
+    .live-rate-info strong { font-size: 15px; }
+    .live-rate-info span { margin-top: 5px; font-size: 12px; line-height: 1.5; }
+    .refresh-button { padding: 10px 14px; font-size: 13px; }
+    .rate-value { margin: 10px 0 28px; font-size: 18px; }
+    .amount-label { margin-bottom: 8px; font-size: 15px; }
+
+    .amount-box {
+      min-height: 68px;
+      gap: 12px;
+      border-radius: 12px;
+      padding: 0 14px;
+    }
+
+    .amount-box:focus-within { padding: 0 13px; }
+    .amount-box input { font-size: 25px; }
+    .currency { gap: 9px; font-size: 18px; }
+    .currency-flag { width: 26px; height: 19px; }
+    .flag-ph::before {
+      border-top-width: 9.5px;
+      border-bottom-width: 9.5px;
+      border-left-width: 11px;
+    }
+
+    .quick-buttons { gap: 9px; margin-top: 12px; }
+    .quick-button { padding: 7px 12px; font-size: 13px; }
+    .swap-wrap { height: 68px; }
+    .swap-button { width: 44px; height: 44px; font-size: 24px; }
+    .result-amount { min-height: 64px; border-radius: 12px; padding: 0 14px; }
+    .result-value { font-size: 24px; }
+    .direction-options { gap: 10px; margin-top: 20px; }
+    .direction-button { border-radius: 11px; padding: 13px 10px; font-size: 14px; }
+    .converter-actions { margin-top: 16px; }
+    .primary-action { min-height: 52px; font-size: 15px; }
+    .status-line { font-size: 12px; }
+
+    .contact-card {
+      width: min(100% - 40px, 540px);
+      margin-top: 24px;
+      border-radius: 20px;
+      padding: 22px;
+    }
+
+    .contact-card h2 { font-size: 19px; }
+    .contact-card p { font-size: 14px; }
+    .contact-links { gap: 12px; }
+    .contact-link { min-height: 52px; border-radius: 11px; font-size: 13px; }
+
+    @media (max-width: 640px) {
+      .nav-inner { min-height: 62px; padding: 9px 14px; }
+      .brand { font-size: 15px; }
+      .brand-mark { width: 34px; height: 34px; }
+      .nav-action { padding: 8px 11px; font-size: 13px; }
+      .hero { min-height: 420px; padding: 28px 12px 64px; }
+      .converter { padding: 24px 18px 21px; border-radius: 22px; }
+      .amount-box { min-height: 62px; }
+      .amount-box input { font-size: 22px; }
+      .result-amount { min-height: 60px; }
+      .result-value { font-size: 22px; }
+      .contact-card { padding: 19px; }
+    }
+
+    @media (max-width: 420px) {
+      .contact-links { grid-template-columns: 1fr; }
+      .contact-link { font-size: 14px; }
+      .live-rate-tools { gap: 8px; padding: 12px; }
+      .live-rate-info strong { font-size: 13px; }
+      .live-rate-info span { font-size: 11px; }
+      .refresh-button { padding: 8px 10px; }
+    }
   </style>
 </head>
 <body>
