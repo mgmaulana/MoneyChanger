@@ -1220,8 +1220,7 @@
       if (arahKonversi === 'PHP_TO_IDR') {
         const kursBeliDenganBiaya = rateBeli * 1.075;
         const kursAkhirText = kursBeliDenganBiaya.toLocaleString('id-ID', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 4
+          maximumFractionDigits: 0
         });
         ringkasanKonversi =
           `\n1 PHP = Rp ${kursAkhirText}` +
