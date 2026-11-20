@@ -384,7 +384,12 @@
       margin: 0 0 18px;
     }
 
-    .direction-option { min-width: 0; }
+    .direction-option {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      align-items: stretch;
+    }
 
     .direction-rate {
       min-height: 18px;
@@ -407,6 +412,7 @@
 
     .direction-button {
       min-height: 58px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
