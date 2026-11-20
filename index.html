@@ -147,7 +147,6 @@
       font-size: 12px;
       font-weight: 600;
     }
-
     .currency-row {
       display: grid;
       gap: 8px;
@@ -1171,21 +1170,22 @@
     function hitung() {
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
       const pembayaranIdr = arahKonversi === 'PHP_TO_IDR';
+      const tarifBiaya = pembayaranIdr ? (nominalRaw < 5000 ? 0.075 : 0.065) : 0;
+      const persenBiaya = (tarifBiaya * 100).toLocaleString('id-ID');
       document.getElementById('displayRate').textContent =
         `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-      document.getElementById('labelHasilUtama').textContent = pembayaranIdr
-        ? 'Total pembayaran (termasuk biaya 7,5%)'
-        : 'Nominal dalam Rupiah (IDR)';
+      const labelHasilUtama = document.getElementById('labelHasilUtama');
+      labelHasilUtama.textContent = 'Nominal dalam Rupiah (IDR)';
       document.getElementById('paymentBreakdown').hidden = !pembayaranIdr;
       document.getElementById('bankDestination').hidden = !pembayaranIdr;
       document.getElementById('statusBadge').textContent = rateAktif > 0
         ? (nominalRaw > 0
-          ? (pembayaranIdr ? 'Total termasuk biaya pembayaran 7,5%' : 'Kurs otomatis aktif')
+          ? (pembayaranIdr ? `Total termasuk biaya pembayaran ${persenBiaya}%` : 'Kurs otomatis aktif')
           : 'Masukkan nominal untuk menghitung total')
         : 'Menunggu kurs otomatis. Tekan Perbarui untuk mencoba lagi.';
 
       const nominalIdr = Math.round(nominalRaw * rateAktif);
-      const biayaIdr = pembayaranIdr ? Math.round(nominalIdr * 0.075) : 0;
+      const biayaIdr = pembayaranIdr ? Math.round(nominalIdr * tarifBiaya) : 0;
       const totalBayarIdr = nominalIdr + biayaIdr;
       const hasilText = `Rp ${totalBayarIdr.toLocaleString('id-ID')}`;
       if (pembayaranIdr) document.getElementById('idrTotal').textContent = hasilText;
