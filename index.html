@@ -132,14 +132,6 @@
       font-weight: 600;
     }
 
-    .rate-value {
-      margin: 7px 0 22px;
-      text-align: center;
-      color: var(--blue-950);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
     .amount-label {
       display: block;
       margin-bottom: 5px;
@@ -390,6 +382,17 @@
       grid-template-columns: 1fr 1fr;
       gap: 8px;
       margin: 0 0 18px;
+    }
+
+    .direction-option { min-width: 0; }
+
+    .direction-rate {
+      min-height: 18px;
+      margin: 0 0 8px;
+      text-align: center;
+      color: var(--blue-950);
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .direction-button, .mode-button {
@@ -732,7 +735,6 @@
     .live-rate-info strong { font-size: 15px; }
     .live-rate-info span { margin-top: 5px; font-size: 12px; line-height: 1.5; }
     .refresh-button { padding: 10px 14px; font-size: 13px; }
-    .rate-value { margin: 10px 0 28px; font-size: 18px; }
     .amount-label { margin-bottom: 8px; font-size: 15px; }
 
     .amount-box {
@@ -948,11 +950,15 @@
         </div>
         <button type="button" class="refresh-button" id="btnRefreshRate" onclick="perbaruiKurs()">Perbarui</button>
       </div>
-      <p class="rate-value" id="displayRate">1 PHP = Rp 0</p>
-
       <div class="direction-options" aria-label="Arah konversi">
-        <button type="button" id="btnArahIDRtoPHP" class="direction-button active" onclick="setArah('IDR_TO_PHP')"><span>SELL</span><strong>JUAL</strong></button>
-        <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')"><span>BUY</span><strong>BELI</strong></button>
+        <div class="direction-option">
+          <p class="direction-rate" id="displaySellRate">1 PHP = Rp 0</p>
+          <button type="button" id="btnArahIDRtoPHP" class="direction-button active" onclick="setArah('IDR_TO_PHP')"><span>SELL</span><strong>JUAL</strong></button>
+        </div>
+        <div class="direction-option">
+          <p class="direction-rate" id="displayBuyRate">1 PHP = Rp 0</p>
+          <button type="button" id="btnArahPHPtoIDR" class="direction-button" onclick="setArah('PHP_TO_IDR')"><span>BUY</span><strong>BELI</strong></button>
+        </div>
       </div>
 
       <div class="currency-row" id="phpRow">
@@ -1167,13 +1173,21 @@
       hitung();
     }
 
+    function tarifBiayaUntukNominal(nominal) {
+      return nominal < 5000 ? 0.075 : 0.065;
+    }
+
     function hitung() {
       const rateAktif = jenisRate === 'jual' ? rateJual : rateBeli;
       const pembayaranIdr = arahKonversi === 'PHP_TO_IDR';
-      const tarifBiaya = pembayaranIdr ? (nominalRaw < 5000 ? 0.075 : 0.065) : 0;
+      const tarifBiaya = pembayaranIdr ? tarifBiayaUntukNominal(nominalRaw) : 0;
       const persenBiaya = (tarifBiaya * 100).toLocaleString('id-ID');
-      document.getElementById('displayRate').textContent =
-        `1 PHP = Rp ${rateAktif.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+      const tarifUntukKursBeli = tarifBiayaUntukNominal(nominalRaw);
+      const opsiFormatKurs = { maximumFractionDigits: 2 };
+      document.getElementById('displaySellRate').textContent =
+        `1 PHP = Rp ${rateJual.toLocaleString('id-ID', opsiFormatKurs)}`;
+      document.getElementById('displayBuyRate').textContent =
+        `1 PHP = Rp ${(rateBeli * (1 + tarifUntukKursBeli)).toLocaleString('id-ID', opsiFormatKurs)}`;
       const labelHasilUtama = document.getElementById('labelHasilUtama');
       labelHasilUtama.textContent = 'Nominal dalam Rupiah (IDR)';
       document.getElementById('paymentBreakdown').hidden = !pembayaranIdr;
@@ -1218,16 +1232,17 @@
       const nomorRekening = rekeningBank[bankPilihan];
       let ringkasanKonversi;
       if (arahKonversi === 'PHP_TO_IDR') {
-        const kursBeliDenganBiaya = rateBeli * 1.075;
+        const tarifBiaya = tarifBiayaUntukNominal(nominalRaw);
+        const kursBeliDenganBiaya = rateBeli * (1 + tarifBiaya);
         const kursAkhirText = kursBeliDenganBiaya.toLocaleString('id-ID', {
-          maximumFractionDigits: 0
+          maximumFractionDigits: 2
         });
         ringkasanKonversi =
-          `\n1 PHP = Rp ${kursAkhirText}` +
+          `\n1 PHP = Rp ${kursAkhirText} (${(tarifBiaya * 100).toLocaleString('id-ID')}%)` +
           `\nJumlah PHP: ₱ ${nominal}` +
           `\nNominal IDR: ${hasil}`;
       } else {
-        const kurs = document.getElementById('displayRate').textContent;
+        const kurs = document.getElementById('displaySellRate').textContent;
         ringkasanKonversi = `\n${kurs}\nNominal PHP: ₱ ${nominal}\nNominal IDR: ${hasil}`;
       }
       const teks = `Kalkulasi Kurs MGM EXCHANGER${ringkasanKonversi}\n\nKontak:\nWhatsApp: +639457115389\nTelegram: @mgm_1227\n\nTujuan pembayaran:\nBank ${bankPilihan}\nNo. rekening: ${nomorRekening}`;
